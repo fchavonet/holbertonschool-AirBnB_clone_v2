@@ -253,5 +253,5 @@ A big thank you to all my Holberton School peers for their help and support thro
 **Fabien CHAVONET**
 - Github: [@fchavonet](https://github.com/fchavonet)
 
-** Nicolas Mancino**
+**Nicolas Mancino**
 - Github: [Nicolaslegoat](https://github.com/Nicolaslegoat)
