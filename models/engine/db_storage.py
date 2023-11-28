@@ -5,6 +5,12 @@ from models.base_model import Base
 from models.base_model import BaseModel
 from sqlalchemy import create_engine
 from os import getenv
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 
 class DBStorage:
     """Private class attributes"""
@@ -24,6 +30,15 @@ def __init__(self):
         Base.metadata.drop_all(self.__engine)
 
 def all(self, cls=None):
+    if cls is None:
+        obj = self.__session.query(User).all()
+        obj.extend(self.__session.query(State).all())
+        obj.extend(self.__session.query(City).all())
+        obj.extend(self.__session.query(Amenity).all())
+        obj.extend(self.__session.query(Place).all())
+        obj.extend(self.__session.query(Review).all())
+
+    else:
 
 
 def new(self, obj):
