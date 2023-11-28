@@ -30,16 +30,19 @@ def __init__(self):
         Base.metadata.drop_all(self.__engine)
 
 def all(self, cls=None):
+    """Query on the current database session"""
+
     if cls is None:
-        obj = self.__session.query(User).all()
-        obj.extend(self.__session.query(State).all())
-        obj.extend(self.__session.query(City).all())
-        obj.extend(self.__session.query(Amenity).all())
-        obj.extend(self.__session.query(Place).all())
-        obj.extend(self.__session.query(Review).all())
-
+        objects = self.__session.query(BaseModel).all()
     else:
+        objects = self.__session.query(cls).all()
 
+    obj_dict = {}
+    for obj in objects:
+        key = "{}.{}".format(type(obj).__name__, obj.id)
+        obj_dict[key] = obj
+
+    return obj_dict
 
 def new(self, obj):
     """add the object to the current database session """
