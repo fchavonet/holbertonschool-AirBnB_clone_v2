@@ -2,7 +2,6 @@
 """Define DBStorage engine"""
 
 from models.base_model import BaseModel, Base
-
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
@@ -21,30 +20,35 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}"
                                       .format(getenv("HBNB_MYSQL_USER"),
-                                        getenv("HBNB_MYSQL_PWD"),
-                                        getenv("HBNB_MYSQL_HOST"),
-                                        getenv("HBNB_MYSQL_DB")),
-                                        pool_pre_ping=True)
-    
-        if getenv("HBNB_ENV") == "test":
-            Base.metadata.drop_all(self.__engine)
+                                              getenv("HBNB_MYSQL_PWD"),
+                                              getenv("HBNB_MYSQL_HOST"),
+                                              getenv("HBNB_MYSQL_DB")),
+                                      pool_pre_ping=True)
+        try:
+            if getenv("HBNB_ENV") == "test":
+                Base.metadata.drop_all(self.__engine)
+        except KeyError:
+            pass
+
+        Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        self.__session = scoped_session(Session)
 
     def all(self, cls=None):
-        """Query on the current database session"""
+        storage = {}
+        valid_classes = [User, State, City, Amenity, Place, Review]
 
         if cls is None:
-            objects = self.__session.query(BaseModel).all()
+            for cls in valid_classes:
+                for instance in self.__session.query(cls):
+                    storage["{}.{}".format(cls.__name__, instance.id)] = instance
         else:
-            objects = self.__session.query(cls).all()
+            if cls in valid_classes:
+                for instance in self.__session.query(cls):
+                    storage["{}.{}".format(cls.__name__, instance.id)] = instance
 
-        obj_dict = {}
-        for obj in objects:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            obj_dict[key] = obj
-
-        return obj_dict
+        return storage
 
     def new(self, obj):
         """add the object to the current database session """
@@ -61,8 +65,6 @@ class DBStorage:
 
     def reload(self):
         """Create all tables and initialize the session"""
-
-        from models import base_model
 
         Base.metadata.create_all(self.__engine)
 
