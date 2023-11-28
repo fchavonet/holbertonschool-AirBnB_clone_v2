@@ -10,13 +10,20 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
+        # If cls is specified, filter objects by the exact class type
         if cls is not None:
             filtered_objects = {}
+
+            # Iterate through __objects to find the specified class type
             for key, obj in FileStorage.__objects.items():
                 if type(obj) is cls:
+                    # Add the object to the filtered list
                     filtered_objects[key] = obj
+
+            # Return the filtered list of objects
             return filtered_objects
         else:
+            # If cls is not specified, return all objects in __objects
             return FileStorage.__objects
 
     def new(self, obj):
@@ -59,8 +66,13 @@ class FileStorage:
     def delete(self, obj=None):
         """Deletes an object from __objects if it's inside"""
         try:
+            # Check if obj is provided
             if obj is not None:
+                # Generate a unique key for obj
                 key = obj.to_dict()['__class__'] + '.' + obj.id
+
+                # Attempt to delete obj from __objects using the key
                 del FileStorage.__objects[key]
         except KeyError:
+            # Ignore if the key doesn't exist in __objects
             pass
