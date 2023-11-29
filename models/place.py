@@ -42,7 +42,7 @@ class Place(BaseModel, Base):
 
             review_list = []
             for review in storage.all(Review).values():
-                if review.place_id == self.id:
+                if self.place_id == self.id:
                     review_list.append(review)
             return review_list
 
@@ -53,7 +53,7 @@ class Place(BaseModel, Base):
 
             amenity_list = []
             for amenity in storage.all(Amenity).values():
-                if amenity.id == self.id:
+                if self.amenity_ids == self.id:
                     amenity_list.append(amenity)
             return amenity_list
 
