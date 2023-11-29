@@ -8,8 +8,7 @@ from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
 
 place_amenity = Table(
-    "place_amenity",
-    Base.metadata,
+    "place_amenity", Base.metadata,
     Column("place_id", String(60),
            ForeignKey("places.id"),
            primary_key=True, nullable=False),
@@ -53,9 +52,8 @@ class Place(BaseModel, Base):
             from models import storage
 
             amenity_list = []
-            for amenity_id in self.amenity_ids:
-                amenity = storage.get(Amenity, amenity_id)
-                if amenity:
+            for amenity in storage.all(Amenity).values():
+                if amenity.id == self.id:
                     amenity_list.append(amenity)
             return amenity_list
 
