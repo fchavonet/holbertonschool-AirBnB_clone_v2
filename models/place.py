@@ -1,10 +1,22 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
+from models.amenity import Amenity
 from models.review import Review
 from os import getenv
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
+
+place_amenity = Table(
+    "place_amenity",
+    Base.metadata,
+    Column("place_id", String(60),
+           ForeignKey("places.id"),
+           primary_key=True, nullable=False),
+    Column("amenity_id", String(60),
+           ForeignKey("amenities.id"),
+           primary_key=True, nullable=False)
+)
 
 
 class Place(BaseModel, Base):
@@ -26,7 +38,7 @@ class Place(BaseModel, Base):
     else:
         @property
         def reviews(self):
-            """ """
+            """ Getter attribute for reviews in FileStorage """
             from models import storage
 
             review_list = []
@@ -34,3 +46,21 @@ class Place(BaseModel, Base):
                 if review.place_id == self.id:
                     review_list.append(review)
             return review_list
+
+        @property
+        def amenities(self):
+            """Getter attribute for amenities in FileStorage"""
+            from models import storage
+
+            amenity_list = []
+            for amenity_id in self.amenity_ids:
+                amenity = storage.get(Amenity, amenity_id)
+                if amenity:
+                    amenity_list.append(amenity)
+            return amenity_list
+
+        @amenities.setter
+        def amenities(self, amenity):
+            """Setter attribute for amenities in FileStorage"""
+            if isinstance(amenity, Amenity):
+                self.amenity_ids.append(amenity.id)
