@@ -108,6 +108,52 @@ class test_fileStorage(unittest.TestCase):
             print(type(storage))
             self.assertEqual(type(storage), FileStorage)
 
+    def test_all_with_cls_filter(self):
+        """ __objects is filtered by class """
+        new1 = BaseModel()
+        new2 = User()
+        new3 = Place()
+
+        # Filter by BaseModel
+        result = storage.all(BaseModel)
+        self.assertIn(new1, result.values())
+        self.assertNotIn(new2, result.values())
+        self.assertNotIn(new3, result.values())
+
+        # Filter by User
+        result = storage.all(User)
+        self.assertNotIn(new1, result.values())
+        self.assertIn(new2, result.values())
+        self.assertNotIn(new3, result.values())
+
+        # Filter by Place
+        result = storage.all(Place)
+        self.assertNotIn(new1, result.values())
+        self.assertNotIn(new2, result.values())
+        self.assertIn(new3, result.values())
+
+    def test_new_with_cls_filter(self):
+        """ new adds object to __objects only if it matches the class filter """
+        new1 = BaseModel()
+        new2 = User()
+        new3 = Place()
+
+        # Add BaseModel object
+        storage.new(new1)
+        self.assertIn(new1, storage.all().values())
+
+        # Add User object
+        storage.new(new2)
+        self.assertIn(new2, storage.all(User).values())
+        self.assertNotIn(new2, storage.all().values())
+
+        # Add Place object
+        storage.new(new3)
+        self.assertIn(new3, storage.all(Place).values())
+        self.assertNotIn(new3, storage.all().values())
+
+        
+
 
 if __name__ == "__main__":
     unittest.main()
