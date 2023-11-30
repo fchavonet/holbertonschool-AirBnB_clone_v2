@@ -43,11 +43,13 @@ class DBStorage:
         if cls is None:
             for cls in valid_classes:
                 for instance in self.__session.query(cls):
-                    storage["{}.{}".format(cls.__name__, instance.id)] = instance
+                    storage["{}.{}".format(
+                        cls.__name__, instance.id)] = instance
         else:
             if cls in valid_classes:
                 for instance in self.__session.query(cls):
-                    storage["{}.{}".format(cls.__name__, instance.id)] = instance
+                    storage["{}.{}".format(
+                        cls.__name__, instance.id)] = instance
 
         return storage
 
