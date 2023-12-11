@@ -31,12 +31,12 @@ class FileStorage:
         self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
 
     def save(self):
-    """Saves storage dictionary to file"""
-    with open(FileStorage.__file_path, 'w') as f:
-        temp = {}
-        for key, val in FileStorage.__objects.items():
-            temp[key] = val.to_dict()
-        json.dump(temp, f)
+        """Saves storage dictionary to file"""
+        with open(FileStorage.__file_path, 'w') as f:
+            temp = {}
+            for key, val in FileStorage.__objects.items():
+                temp[key] = val.to_dict()
+            json.dump(temp, f)
 
     def reload(self):
         """Loads storage dictionary from file"""
@@ -76,6 +76,6 @@ class FileStorage:
             # Ignore if the key doesn't exist in __objects
             pass
 
-     def close(self):
+    def close(self):
         """Deserializes the JSON file to objects"""
         self.reload()
