@@ -76,3 +76,7 @@ class FileStorage:
         except KeyError:
             # Ignore if the key doesn't exist in __objects
             pass
+
+     def close(self):
+        """Deserializes the JSON file to objects"""
+        self.reload()
